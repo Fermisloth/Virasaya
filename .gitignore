@@ -1,0 +1,26 @@
+.gradle/
+**/build/
+build/
+local.properties
+.idea/**
+!.idea/.gitignore
+*.iml
+.kotlin/
+
+# Local machine and generated IDE files
+.externalNativeBuild/
+.cxx/
+
+# Secrets, signing keys, and credentials
+*.jks
+*.keystore
+*.p12
+*.pem
+*.key
+google-services.json
+service-account*.json
+secrets.properties
+
+# OS/editor files
+.DS_Store
+Thumbs.db
