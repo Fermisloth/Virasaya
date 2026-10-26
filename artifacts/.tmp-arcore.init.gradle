@@ -1,0 +1,7 @@
+settingsEvaluated { settings ->
+    settings.dependencyResolutionManagement.repositories.maven { repository ->
+        repository.name = 'temporaryArCoreBootstrap'
+        repository.url = uri('file:///D:/Projects/Virasaya/artifacts/mavenrepo')
+        repository.content { includeGroup('com.google.ar') }
+    }
+}

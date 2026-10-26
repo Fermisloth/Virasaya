@@ -1,8 +1,10 @@
 # Virasaya — Project Context for Codex
 
+> **Resume ongoing work:** Read `PROGRESS.md` for current milestone status and `CONTEXT_HANDOFF.md` after context loss. Read `artifacts/VERIFICATION.md` for device/build evidence and `MILESTONE_C_PLAN.md` for AR scope and open acceptance checks.
+>
 > **Purpose:** This file is the working product and engineering brief for coding agents building Virasaya from scratch. Read it before proposing architecture or implementing features. Keep it truthful as the project evolves.
 >
-> **Status as of 19 October 2026:** Android foundation milestone verified. The debug project builds, the APK was installed and launched on an iQOO Z10 5G, and the initial Compose UI plus placeholder flow work on the physical device. Real navigation, landmark recognition, AR, and field validation remain unimplemented or unverified.
+> **Status updated 26 October 2026:** The app has sourced landmark content, a frontend based on `frontend_reference.png`, an offline OpenLayers map, and Dijkstra routing over imported OpenStreetMap geometry. Milestone C's optional ARCore preview supports plane placement and an Instant Placement fallback, manual arrow rotation, camera-denial recovery, cause-specific tracking advice and 2D return. On the supported phone, a live scan showed active camera tracking but zero fitted planes; the fallback placed a visible provisional arrow on a floor tap. Full tracking and stability while moving remain unverified; recognition remains unimplemented. See `PROGRESS.md`, `artifacts/VERIFICATION.md`, and `MILESTONE_C_PLAN.md` for current evidence and acceptance criteria.
 
 ## 1. Project identity
 
@@ -69,7 +71,7 @@ Build one connected visitor flow:
 | Architecture | Small single-module app, MVVM-style separation | Testability without premature complexity |
 | Heritage content | Local JSON + source metadata | Works without backend; easy to audit |
 | Navigation engine | Kotlin graph model + A* (or Dijkstra) | Deterministic and independently testable |
-| AR | ARCore, potentially SceneView | First prove camera/tracking/anchored marker on device; verify dependency versions |
+| AR | Optional ARCore with a small GLES renderer | Plane anchor preferred, provisional Instant Placement fallback, manually aligned route arrow; no geographic registration; physical full-tracking/stability gates remain open |
 | Recognition | Lightweight on-device classifier (implementation choice TBD) | Benchmark actual images; avoid speculative accuracy claims |
 | Maps | Site map image/vector + graph overlay | Avoid dependence on unreliable indoor GPS |
 | Source control | Git | Checkpoint every working milestone |

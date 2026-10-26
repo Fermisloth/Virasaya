@@ -1,0 +1,8 @@
+html,body{margin:0;width:100%;height:100vh;overflow:hidden;background:#e8e9df;font-family:Arial,sans-serif;touch-action:none}
+/* A percentage-height root can resolve to zero during AndroidView measurement. */
+#map{position:fixed;inset:0;overflow:hidden;touch-action:none}
+.map-tools{position:fixed;right:14px;top:16px;display:flex;flex-direction:column;gap:8px}
+.map-tools button{width:42px;height:42px;border:1px solid #ffffff25;background:#192119ed;color:#f9f8f1;border-radius:50%;font-size:23px;box-shadow:0 2px 10px #0002;touch-action:manipulation}
+.map-tools button:active{background:#ff853e;color:#161914}.map-tools #north{font-size:15px}
+.map-credit{position:fixed;bottom:5px;right:5px;background:#f8f9f1de;color:#42483d;font-size:10px;padding:4px 6px;border-radius:5px;pointer-events:none}
+.ol-scale-line{bottom:7px;left:10px;background:#192119ce;border-radius:6px;padding:3px}.ol-scale-line-inner{font-size:10px;border-color:#f3f4e7;color:#f3f4e7}.ol-rotate,.ol-attribution,.ol-zoom{display:none}

@@ -4,11 +4,11 @@ name: Vercel-Inspired-design-analysis
 description: An inspired interpretation of Vercel's design language — a developer-platform brand whose surface is a stark black-and-ink duet on near-white canvas, broken at hero scale by a multi-color mesh gradient (cyan / blue / magenta / amber) that acts as the entire decorative system, paired with a custom geometric sans for headlines and a monospaced caption face for technical labels.
 
 implementation-status:
-  - The initial Jetpack Compose UI runs on the verified physical-device prototype.
-  - Landmark selection, landmark details, and route screens currently contain explicit placeholder content.
-  - Future route screens must distinguish calculated navigation from visual mockups or illustrative data.
+  - The user explicitly selected frontend_reference.png as the visual authority on 22 October 2026; it supersedes the older Vercel palette and component rules below.
+  - The current Compose UI uses dark olive surfaces, orange actions, large landmark photos, rounded controls, and a real offline map.
+  - Map positions and path geometry come from OpenStreetMap; approximate mapped distances must remain distinct from field measurements.
   - Landmark selection, route instructions, and navigation state should remain clear at each step.
-  - Preserve the existing UI structure; do not redesign it unnecessarily while implementing Milestone B.
+  - Follow the project reference PNG when refining the frontend; phone screenshots of the old UI were examples of the rejected design.
 
 colors:
   primary: "#171717"

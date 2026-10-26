@@ -6,6 +6,8 @@ local.properties
 !.idea/.gitignore
 *.iml
 .kotlin/
+.android/
+artifacts/*.log
 
 # Local machine and generated IDE files
 .externalNativeBuild/
@@ -24,3 +26,4 @@ secrets.properties
 # OS/editor files
 .DS_Store
 Thumbs.db
+artifacts/window.xml
