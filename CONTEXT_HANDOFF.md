@@ -1,18 +1,18 @@
 # Virasaya task handoff
 
-Updated: 26 October 2026. Read this after context loss, then check `PROGRESS.md` and the current repository state.
+Updated: 27 October 2026. Read this after context loss, then check `PROGRESS.md` and the current repository state.
 
 ## Current checkpoint — Milestone C in progress
 
 The app has an optional ARCore preview with a local horizontal-plane anchor, tap placement, manual arrow rotation, route-step controls and a 2D escape. The phone previously demonstrated surface detection, placing/rotating the arrow and a tracked anchor. Camera denial, opening Android app settings, and returning to the same 2D step were also checked. Camera permission was restored after those checks.
 
-The latest change maps ARCore availability outcomes accurately, adds a direct settings action after permanent camera denial, makes anchor disposal best-effort, and shows recovery advice for ARCore's paused-tracking reasons. A live scan showed camera tracking active but zero detected planes. ARCore Instant Placement is now enabled as a fallback; it placed a visible, explicitly provisional arrow after a floor tap. The updated offline build passed 12 JVM tests and was installed on the physical phone.
+The latest AR change maps availability outcomes accurately, adds a direct settings action after permanent camera denial, makes anchor disposal best-effort, and shows recovery advice for ARCore's paused-tracking reasons. A live scan showed camera tracking active but zero detected planes. ARCore Instant Placement placed a visible provisional arrow; movement changed its UI status to “Marker tracked”, and the user reported the arrow kept working. AR → 2D, fresh AR entry, and Home/background/resume were checked. The latest offline build also adds page-specific history citations and audited route checks; 14 JVM tests passed and the APK was installed. The phone is now at its lock screen after that update.
 
 A fresh AR entry previously showed a black preview and “Tracking is paused” while the phone state was uncertain. After the user unlocked it, a fresh entry showed live camera and active tracking; the earlier black view was not reproduced. The system-camera baseline remained inconclusive because the phone had relocked during that separate check. Camera permission is restored.
 
 ### Next physical check
 
-The final APK has been installed and launched; the phone is currently at the app home screen, not inside the AR preview. Reopen Lahori Gate → Diwan-i-Aam → walking preview → Try AR preview. Confirm step 1, tap a clearly visible textured floor area, and slowly move the phone over that scene until the provisional marker becomes fully tracked; verify that it stays fixed to the same surface. Then exercise AR exit/re-entry, background/resume, and tracking recovery. Do not mark C complete until full tracking and world-anchored movement work on the phone.
+The final APK is installed, and the phone is at its lock screen. Camera permission is restored. The user previously moved the phone until the UI changed to “Marker tracked” and reported that the arrow kept working during movement (`artifacts/tracking-after-movement-report.png`). AR → 2D step preservation, fresh AR entry and Home/background/resume have now been checked (`artifacts/lifecycle-reentry.png`, `artifacts/lifecycle-resume.png`). Permission revocation restarted the app to Home; restoring permission allowed another AR launch. Next: unlock and verify the updated p. 97 source label in landmark details, then induce tracking loss on a low-detail view and check recovery. Repeat movement and lifecycle checks before closing Milestone C.
 
 See `artifacts/ar-anchor-tracked.png` for the earlier successful placement and `artifacts/ar-reentry-check.png` for the stationary paused state. `PROGRESS.md` is the concise milestone status; `artifacts/VERIFICATION.md` contains dated build/device evidence; `MILESTONE_C_PLAN.md` defines scope and acceptance.
 
@@ -42,13 +42,13 @@ Approximate example route: Lahori Gate → Diwan-i-Aam, 423.864 m over 12 mapped
 
 ## Verified evidence
 
-Current build and device evidence, including 12 passing JVM tests and the unresolved AR re-entry observation, is recorded in `artifacts/VERIFICATION.md`. Earlier Milestone B routing coverage includes all nine pilot endpoint pairs, mapped-edge consistency, shortest weighted routes, directed restrictions, disconnected/same-origin cases, turn geometry and snapping. XML reports are under `app/build/test-results/testDebugUnitTest/`.
+Current build and device evidence, including 14 passing JVM tests and the remaining tracking-loss/lifecycle checks, is recorded in `artifacts/VERIFICATION.md`. Earlier Milestone B routing coverage includes all nine pilot endpoint pairs, mapped-edge consistency, shortest weighted routes, directed restrictions, disconnected/same-origin cases, turn geometry and snapping. XML reports are under `app/build/test-results/testDebugUnitTest/`.
 
-Latest `:app:testDebugUnitTest :app:assembleDebug` completed successfully with 12 passing JVM tests. The resulting APK was installed on the phone. Exact build details, physical checks and the open black-preview/re-entry observation are in `artifacts/VERIFICATION.md`.
+Latest `:app:testDebugUnitTest :app:assembleDebug` completed successfully with 14 passing JVM tests. The resulting APK was installed on the phone, which is now at the lock screen. Exact build details and physical checks are in `artifacts/VERIFICATION.md`.
 
 API 37 emulator checks: real map rendering, search for Naubat yielding one place, bookmarks, history/details, destination changes, swap, manual next/previous/close preview, portrait/landscape and Google Maps walking intent. Google Maps launched its location permission dialog; no permission was granted. Browser map testing also covered pan/zoom and small viewport resizing without JS errors.
 
-The final B map-label correction is installed. Later C builds were also installed and launched on serial `10BFBA0J4L008B8` (iQOO Z10 5G). AR permission denial/settings and 2D return were exercised. The latest app-level route check returned to Lahori Gate → Diwan-i-Aam at step 1. Camera permission is restored. In the latest AR scan the camera was tracking, no plane was found, and the provisional fallback placed an arrow on the floor. The final APK update subsequently returned the app to its home screen; reopen the AR flow for the physical movement check. The phone may lock again during idle time.
+The final B map-label correction is installed. Later C builds were also installed and launched on serial `10BFBA0J4L008B8` (iQOO Z10 5G). AR permission denial/settings and 2D return were exercised. The latest app-level route check returned to Lahori Gate → Diwan-i-Aam at step 1. Camera permission is restored. In the latest AR scan the camera was tracking, no plane was found, and the provisional fallback placed an arrow on the floor. After a stationary ~30-second observation, moving the phone changed the UI to “Marker tracked”; the user reported the arrow kept working. AR → 2D step preservation, fresh AR entry and one Home/background/resume check succeeded. Revoking camera permission restarted the app at Home; permission restoration and fresh AR launch succeeded. The latest source-audit APK is installed; the phone is now at its lock screen. Unlock it to verify the page-specific source label in landmark details. Repeated movement, tracking-loss and lifecycle stress remain open.
 
 Actual screenshots in `artifacts/`:
 
@@ -105,4 +105,4 @@ If ADB becomes unauthorized, the earlier solution used the existing user key wit
 
 README.md, PROJECT_CONTEXT.md, PROGRESS.md, MILESTONE_C_PLAN.md and artifacts/VERIFICATION.md describe the current frontend/map and Milestone C state. There are many uncommitted source/assets and unrelated untracked IDE/tool files; inspect before staging or deleting. Preserve the reference PNG and source attribution.
 
-Skills already read/applied: frontend-design, playwright-skill, writing-for-agents, and diagnosing-bugs. Continue with physical AR camera recovery and anchor movement first; return to Red Fort content/graph field verification after the C gate is complete or recorded inconclusive.
+Skills already read/applied: frontend-design, playwright-skill, writing-for-agents, and diagnosing-bugs. Continue with AR tracking-loss recovery and repeatability checks; then proceed to verified Red Fort landmark content and a small site-specific navigation graph, the next engineering task.

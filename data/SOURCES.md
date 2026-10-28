@@ -35,4 +35,24 @@ The app uses Google's ARCore SDK (`com.google.ar:core`) for its optional camera-
 
 ## History
 
-The three concise history texts cite the UNESCO / ICOMOS Red Fort nomination assessment: https://whc.unesco.org/document/8815. Historical layout is not used as evidence of modern walking access.
+The three concise history texts cite the UNESCO / ICOMOS Red Fort nomination assessment, WHC-07/31.COM/INF.8B1, page 97: https://whc.unesco.org/document/8815. This page supports the specific in-app claims:
+
+| Landmark | In-app historical claims | Assessment evidence |
+| --- | --- | --- |
+| Lahori Gate | Ceremonial public entrance; leads into Chhatta Chowk, formerly the palace market | p. 97, “Walls, bastions and gates” and “Chhatta Chowk, palace market” |
+| Naubat Khana | Also called Naqqarkhana / Drum House; beyond the market; musicians serenaded grand arrivals | p. 97, “Naubat Khana or Naqqarkhana Drum House” |
+| Diwan-i-Am | Hall of Public Audience; raised plinth, openings on three sides; throne beneath a marble canopy | p. 97, “Diwan-i-Am, Hall of Public Audience” |
+
+The [ICOMOS advisory-body evaluation](https://whc.unesco.org/archive/advisory_body_evaluation/231rev.pdf) independently describes the same sequence and architectural details on its printed pp. 97–98. The app paraphrases these sources rather than reproducing their prose. These are historical descriptions; they do not establish current visitor routes, access, openings, closures, or accessibility.
+
+## Three-stop walking graph
+
+The bundled `app/src/main/assets/map/network.tsv` is generated from the dated OSM extract above. The pilot contains exactly three landmark endpoints, each snapped to a mapped walking node within 15 m of the OSM footprint centroid. The checked-in network has 400 mapped walking nodes and 439 consecutive-way edges; it excludes ways/nodes tagged as inaccessible and does not synthesize connectors. Current shortest-route outputs from that extract are:
+
+| Landmark pair | Approx. mapped distance | Source path nodes |
+| --- | ---: | ---: |
+| Lahori Gate → Naubat Khana | 281 m | 10 |
+| Naubat Khana → Diwan-i-Am | 206 m | 7 |
+| Lahori Gate → Diwan-i-Am | 424 m | 12 |
+
+These figures are reproducible from the OSM extract and graph generator, not surveyed walking distances. The graph follows mapped geometry; it does not establish that a path is open to visitors today or that it matches the designated visitor route. See `WalkingNetworkTest` for checks that route segments correspond to imported source edges and distances sum from their coordinates.

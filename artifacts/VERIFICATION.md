@@ -22,6 +22,16 @@ Physical phone: inspected home/map and exercised zoom, fit route, preview direct
 
 Functional checks are not frame-rate/battery benchmarks or field validation. Visitor access, distances and endpoint accessibility require on-site checks. AR is implemented as a local, manually aligned preview, but it has no geographic registration; current location, automatic rerouting and recognition are not implemented.
 
+## Milestone C follow-up - 27 October
+
+- Reopened the final APK on the physical iQOO and returned to Lahori Gate → Diwan-i-Aam, AR step 1. Camera tracking was active; the UI still reported no horizontal surface.
+- Tapped the visible floor and confirmed a rendered arrow with the explicit “Provisional marker placed” state. Evidence: `tracking-continue-provisional.png`.
+- At the end of the ~30-second stationary observation, the arrow remained provisional. No deliberate device movement occurred during that observation. The device stayed on the AR screen for the subsequent movement check.
+- The user then moved the phone and reported that the arrow kept working. A fresh accessibility dump showed the status changed to “Marker tracked”; the camera screenshot shows the arrow rendered on the floor after movement: `tracking-after-movement-report.png`. This verifies full ARCore tracking status and a user-reported movement check.
+- Returning from AR to the 2D preview preserved Lahori Gate → Diwan-i-Aam at step 1. A fresh AR entry displayed live camera again (`lifecycle-reentry.png`). Sending the active AR app to Home and reopening it restored the live camera at step 1 without a crash (`lifecycle-resume.png`). These were single checks; repeated lifecycle stress remains open.
+- Revoking CAMERA while the app was active led Android to restart Virasaya at its home screen. No fatal exception was found in the sampled logcat. Camera permission was restored with the Android package manager; navigating back through the route and granting the app's existing permission opened a fresh live AR session (`permission-restored-ar.png`). This did not demonstrate the in-screen permission-loss state because Android restarted the app.
+- Still to verify: induced tracking-loss/recovery, repeated movement and lifecycle stress, AR service-install cancellation, and sustained performance. The content-audit APK has since been installed; the phone is now at its lock screen and camera permission remains granted.
+
 ## Milestone C spike - 26 October
 
 ### Plane-tracking fallback follow-up
@@ -45,3 +55,10 @@ Functional checks are not frame-rate/battery benchmarks or field validation. Vis
 - Renderer cleanup now tolerates an already-closed ARCore session while detaching its anchor. This is a code-level guard; repeated entry/exit and background lifecycle stress still need physical verification.
 
 AR dependency resolution in this sandbox used a temporary local Maven bootstrap containing the official Google Maven POM/AAR; normal project configuration still resolves through Google's Maven repository. Do not retain the temporary build aid as a runtime requirement or claim that a clean networked checkout was tested.
+
+
+## Red Fort source and route audit - 27 October
+
+- Checked the Lahori Gate, Naubat Khana and Diwan-i-Am summaries against printed page 97 of UNESCO/ICOMOS assessment WHC-07/31.COM/INF.8B1. The ICOMOS evaluation corroborates the details on pp. 97-98. Added page-specific source text in the app and a claim-to-page table in `data/SOURCES.md`; the standalone source audit is `data/RED_FORT_CONTENT_AUDIT.md`.
+- Audited the three-stop graph generated from the checked-in OSM extract. It contains three landmark endpoints, 400 walking nodes and 439 source edge records. Routes: Lahori Gate to Naubat Khana 281.0 m / 10 nodes; Naubat Khana to Diwan-i-Am 206.2 m / 7 nodes; Lahori Gate to Diwan-i-Am 423.9 m / 12 nodes. These are map estimates, not surveyed distances or proof of present access.
+- Added JVM checks for the cited historical claims and three route lengths/node counts. Final `:app:testDebugUnitTest :app:assembleDebug` passed: 14 tests (six AR state, two landmark and six walking-network tests). The APK installed successfully. The phone relocked during the post-install UI check, so the updated source label still needs a visual check after unlocking.

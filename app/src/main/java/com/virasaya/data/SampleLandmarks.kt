@@ -2,7 +2,7 @@ package com.virasaya.data
 
 object SampleLandmarks {
     private val unesco = SourceReference(
-        title = "Red Fort Complex nomination assessment, WHC-07/31.COM/INF.8B1",
+        title = "Red Fort Complex nomination assessment, WHC-07/31.COM/INF.8B1, p. 97",
         organization = "UNESCO World Heritage Centre / ICOMOS",
         url = "https://whc.unesco.org/document/8815"
     )

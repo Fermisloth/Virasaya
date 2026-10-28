@@ -55,4 +55,18 @@ class WalkingNetworkTest {
             }
         }
     }
+
+    @Test fun threeRedFortStopsUseTheAuditedMappedPaths() {
+        val network = realNetwork()
+        val routes = listOf(
+            Triple("lahori-gate", "naubat-khana", 281.0 to 10),
+            Triple("naubat-khana", "diwan-i-aam", 206.2 to 7),
+            Triple("lahori-gate", "diwan-i-aam", 423.9 to 12),
+        )
+        for ((start, end, expected) in routes) {
+            val route = requireNotNull(network.route(start, end))
+            assertEquals(expected.first, route.meters, .2)
+            assertEquals(expected.second, route.nodeIds.size)
+        }
+    }
 }

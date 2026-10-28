@@ -4,7 +4,7 @@
 >
 > **Purpose:** This file is the working product and engineering brief for coding agents building Virasaya from scratch. Read it before proposing architecture or implementing features. Keep it truthful as the project evolves.
 >
-> **Status updated 26 October 2026:** The app has sourced landmark content, a frontend based on `frontend_reference.png`, an offline OpenLayers map, and Dijkstra routing over imported OpenStreetMap geometry. Milestone C's optional ARCore preview supports plane placement and an Instant Placement fallback, manual arrow rotation, camera-denial recovery, cause-specific tracking advice and 2D return. On the supported phone, a live scan showed active camera tracking but zero fitted planes; the fallback placed a visible provisional arrow on a floor tap. Full tracking and stability while moving remain unverified; recognition remains unimplemented. See `PROGRESS.md`, `artifacts/VERIFICATION.md`, and `MILESTONE_C_PLAN.md` for current evidence and acceptance criteria.
+> **Status updated 27 October 2026:** The app has sourced landmark content, a frontend based on `frontend_reference.png`, an offline OpenLayers map, and Dijkstra routing over imported OpenStreetMap geometry. Milestone C's optional ARCore preview supports plane placement and an Instant Placement fallback, manual arrow rotation, camera-denial recovery, cause-specific tracking advice and 2D return. On the supported phone, a live scan showed active camera tracking but zero fitted planes; the fallback placed a provisional arrow, then changed to “Marker tracked” after the user moved the phone. The user reported the arrow kept working during movement. One AR re-entry, 2D return and background/resume check succeeded; tracking-loss recovery and lifecycle stress remain open. Recognition remains unimplemented. See `PROGRESS.md`, `artifacts/VERIFICATION.md`, and `MILESTONE_C_PLAN.md` for current evidence and acceptance criteria.
 
 ## 1. Project identity
 
@@ -71,7 +71,7 @@ Build one connected visitor flow:
 | Architecture | Small single-module app, MVVM-style separation | Testability without premature complexity |
 | Heritage content | Local JSON + source metadata | Works without backend; easy to audit |
 | Navigation engine | Kotlin graph model + A* (or Dijkstra) | Deterministic and independently testable |
-| AR | Optional ARCore with a small GLES renderer | Plane anchor preferred, provisional Instant Placement fallback, manually aligned route arrow; no geographic registration; physical full-tracking/stability gates remain open |
+| AR | Optional ARCore with a small GLES renderer | Plane anchor preferred, provisional Instant Placement fallback, manually aligned route arrow; one full-tracking movement check and basic re-entry/background-resume verified; repeatability and tracking-loss recovery remain open |
 | Recognition | Lightweight on-device classifier (implementation choice TBD) | Benchmark actual images; avoid speculative accuracy claims |
 | Maps | Site map image/vector + graph overlay | Avoid dependence on unreliable indoor GPS |
 | Source control | Git | Checkpoint every working milestone |

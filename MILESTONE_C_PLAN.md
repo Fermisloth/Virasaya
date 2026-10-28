@@ -1,6 +1,6 @@
 # Milestone C implementation plan: optional AR feasibility
 
-Date: 26 October 2026. Status: IMPLEMENTED; FULL TRACKING/STABILITY GATES OPEN. Plane placement, manual rotation, a tracked anchor, camera denial, settings recovery and 2D return were demonstrated on the physical phone. A later unlocked scan reproduced camera tracking with zero tracked planes. The app now uses ARCore Instant Placement as a clearly labeled provisional fallback and physically rendered an arrow after a floor tap. Refinement to full tracking, stability during device movement, and lifecycle checks remain open. The app's cause-specific paused-tracking guidance compiled and passed state tests but was not triggered because camera tracking stayed active. The final APK was installed and launched; the phone is currently at the app home screen. See `PROGRESS.md` and `artifacts/VERIFICATION.md` for current evidence.
+Date: 27 October 2026. Status: IMPLEMENTED; TRACKING-LOSS/REPEATABILITY STRESS OPEN. Plane placement, manual rotation, camera denial, settings recovery and 2D return were demonstrated on the physical phone. A later unlocked scan reproduced camera tracking with zero tracked planes. ARCore Instant Placement supplied a clearly labeled provisional fallback; after the user moved the phone the UI changed to “Marker tracked” and the user reported the arrow kept working (`artifacts/tracking-after-movement-report.png`). Fresh AR re-entry and Home/background/resume restored a live camera; returning to 2D preserved route step 1. Permission revocation restarted Android at the app home screen, after which permission was restored and AR launched again. Induced tracking-loss/recovery and repeated lifecycle/movement stress remain open. Cause-specific paused-tracking guidance compiled and passed state tests but was not triggered because camera tracking stayed active. The latest APK adds page-specific historical citations and source-route checks; it is installed, but the phone is now at its lock screen. See `PROGRESS.md` and `artifacts/VERIFICATION.md` for current evidence.
 
 ## Objective and boundary
 
@@ -28,7 +28,7 @@ Add an optional “Try AR preview” action to a valid route. Model states expli
 
 Acceptance: declining permission, declining installation or using an unsupported device leaves 2D navigation intact. No camera request occurs at app launch. If the target phone is unsupported, record the outcome and require another supported physical device to prove tracking; do not sideload around certification or claim AR success.
 
-### C2. Camera and one real tracked marker — PLACEMENT DEMONSTRATED; MOVEMENT/RE-ENTRY OPEN
+### C2. Camera and one real tracked marker — TRACKED MOVEMENT AND BASIC RE-ENTRY DEMONSTRATED
 
 Create/resume the session only after prerequisites pass. Render the camera feed with correct display rotation and projection. Accept taps only when camera tracking is active; use a valid detected horizontal plane when available, otherwise use the clearly labeled provisional Instant Placement fallback. Place one clearly visible marker, replacing and detaching the previous anchor on re-placement.
 
@@ -46,7 +46,7 @@ For the feasibility build, advancing a manual step clears placement/alignment an
 
 Acceptance: the route instruction changes with the selected step, unsupported/lost-tracking states cannot show apparently trustworthy guidance, and returning to the map preserves endpoints and the selected step. There is no claim of automatic geographic alignment.
 
-### C4. Lifecycle, failure handling and regression checks — IN PROGRESS
+### C4. Lifecycle, failure handling and regression checks — BASIC RE-ENTRY/BACKGROUND CHECKED; EDGE CASES OPEN
 
 Handle background/foreground, lock/unlock, rotation, back navigation, camera unavailable, permission revocation and AR service exceptions. Serialize session/render-thread access; pause rendering before pausing the session, detach anchors and close owned resources when leaving. Follow the chosen SDK sample's lifecycle ordering and verify it on device.
 
