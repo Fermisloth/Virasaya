@@ -118,7 +118,7 @@ fun ArGuideScreen(
             Session(context).also { arSession ->
                 arSession.configure(arSession.config.apply {
                     planeFindingMode = Config.PlaneFindingMode.HORIZONTAL
-                    instantPlacementMode = Config.InstantPlacementMode.LOCAL_Y_UP
+                    instantPlacementMode = Config.InstantPlacementMode.DISABLED
                 })
                 session = arSession
                 availability = ArAvailabilityState.Ready
@@ -178,7 +178,7 @@ fun ArGuideScreen(
                 if (confirmedStep && status.cameraTracking && !status.anchorTracking && status.error == null) {
                     Surface(Modifier.align(Alignment.Center), color = Panel.copy(alpha = .78f), shape = MaterialTheme.shapes.medium) {
                         Text(
-                            if (status.planeDetected) "Tap the detected floor" else "Tap the floor for a provisional marker",
+                            if (status.planeDetected) "Tap inside the tracked floor" else "Scan a textured floor until AR detects it",
                             Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
                             color = Orange,
                             style = MaterialTheme.typography.labelLarge,
@@ -239,8 +239,8 @@ fun ArGuideScreen(
                         sessionError != null -> sessionError!!
                         status.error != null -> "${status.error} Use the 2D route or retry AR."
                         !status.cameraTracking -> trackingRecoveryMessage(status.trackingIssue)
-                        !status.anchorTracking -> if (!status.planeDetected && confirmedStep && status.placementMissed) "No floor plane is tracked yet. Tap a textured floor area to place a provisional marker, then keep scanning slowly while AR refines it." else if (!status.planeDetected && confirmedStep) "No floor plane yet. Tap the floor to place a provisional marker, then slowly scan textured areas." else if (!status.planeDetected) "No horizontal surface yet. Slowly scan a well-lit, textured floor or table; avoid blank or reflective areas." else if (confirmedStep && status.placementMissed) "That tap missed the detected surface. Move closer and tap inside the floor or table area." else if (confirmedStep) "Tap inside the detected horizontal surface to place the marker." else "Confirm this step before placing a marker."
-                        status.anchorTracking && status.anchorProvisional -> "Provisional marker placed. Keep scanning the floor slowly while AR refines its position."
+                        status.anchorPlaced && !status.anchorTracking -> "The floor anchor lost tracking, so the arrow is hidden. Move your hand out of view and slowly scan the floor; tap the tracked floor again to place a new marker."
+                        !status.anchorTracking -> if (!status.planeDetected && confirmedStep && status.placementMissed) "No large tracked floor plane is available at that tap. Slowly scan a textured floor, keep hands and small objects out of view, then tap again." else if (!status.planeDetected && confirmedStep) "No large tracked floor plane yet. Slowly scan a well-lit, textured floor; the arrow appears only after AR tracks a broad floor surface." else if (!status.planeDetected) "No large tracked floor plane yet. Slowly scan a well-lit, textured floor; keep hands and small objects out of view." else if (confirmedStep && status.placementMissed) "That tap missed the tracked floor plane. Tap inside the floor area, away from hands or small objects." else if (confirmedStep) "Tap inside the tracked floor plane to place the marker." else "Confirm this step before placing a marker."
                         guidanceReady -> "Marker tracked. Rotate it to match the walkway you can see."
                         else -> "Tracking is recovering. Guidance is paused."
                     }

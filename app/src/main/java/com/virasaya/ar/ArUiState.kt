@@ -4,8 +4,8 @@ package com.virasaya.ar
 data class ArTrackingStatus(
     val cameraTracking: Boolean = false,
     val anchorTracking: Boolean = false,
+    val anchorPlaced: Boolean = false,
     val planeDetected: Boolean = false,
-    val anchorProvisional: Boolean = false,
     val placementMissed: Boolean = false,
     val trackingIssue: ArTrackingIssue? = null,
     val error: String? = null,

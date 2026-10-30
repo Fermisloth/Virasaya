@@ -62,3 +62,19 @@ AR dependency resolution in this sandbox used a temporary local Maven bootstrap 
 - Checked the Lahori Gate, Naubat Khana and Diwan-i-Am summaries against printed page 97 of UNESCO/ICOMOS assessment WHC-07/31.COM/INF.8B1. The ICOMOS evaluation corroborates the details on pp. 97-98. Added page-specific source text in the app and a claim-to-page table in `data/SOURCES.md`; the standalone source audit is `data/RED_FORT_CONTENT_AUDIT.md`.
 - Audited the three-stop graph generated from the checked-in OSM extract. It contains three landmark endpoints, 400 walking nodes and 439 source edge records. Routes: Lahori Gate to Naubat Khana 281.0 m / 10 nodes; Naubat Khana to Diwan-i-Am 206.2 m / 7 nodes; Lahori Gate to Diwan-i-Am 423.9 m / 12 nodes. These are map estimates, not surveyed distances or proof of present access.
 - Added JVM checks for the cited historical claims and three route lengths/node counts. Final `:app:testDebugUnitTest :app:assembleDebug` passed: 14 tests (six AR state, two landmark and six walking-network tests). The APK installed successfully. The phone relocked during the post-install UI check, so the updated source label still needs a visual check after unlocking.
+
+## Physical source and AR re-entry check - 29 October
+
+- ADB connected to the physical iQOO Z10 (serial `10BFBA0J4L008B8`); Android reported CAMERA permission granted. The user authorized bringing Virasaya to the foreground.
+- Opened Lahori Gate details and expanded “Sources & photo credits.” The screen visibly displayed “UNESCO World Heritage Centre / ICOMOS” and “Red Fort Complex nomination assessment, WHC-07/31.COM/INF.8B1, p. 97.” Screenshot: `source-citation-device.png`.
+- Opened the existing Lahori Gate → Diwan-i-Aam route, step 1, entered AR and continued to camera. Live camera rendered with the same route/step. Accessibility hierarchy dumping failed with exit 137 while the GL camera screen was active; screenshots were captured directly through ADB.
+- Confirmed step 1 and tapped the visible floor. The orange arrow rendered. The UI said “Provisional marker placed” in the placement capture and again in the later observation capture. Screenshots: `ar-marker-post-placement.png`, `ar-tracking-recovery-check.png`.
+- This run did not induce a tracking loss or verify recovery; there was no deliberate camera obstruction/blank-wall interval followed by a recovery scan. Do not treat the provisional state or the screenshot pair as full-tracking/recovery evidence. The earlier user-reported movement result remains documented above.
+- No source code changed and no new build/test was run during this device-only check.
+
+## AR hand-following correction - 29 October
+
+- User reported that placing a hand over/near the arrow could hide the arrow, and that the provisional marker could follow the hand rather than stay on the floor.
+- Official ARCore documentation states that Instant Placement uses an estimated initial depth and changes pose as scene geometry becomes known. See [hit-test result types](https://developers.google.com/ar/develop/java/hit-test/developer-guide) and [InstantPlacementPoint pose behavior](https://developers.google.com/ar/reference/java/com/google/ar/core/InstantPlacementPoint).
+- Changed placement to require a tracked, upward-facing plane with at least 0.35 m extent on both axes. Disabled Instant Placement. Added status for an anchor that has lost tracking, telling the visitor why the arrow is hidden and how to reacquire a floor plane. This filters typical hand-sized surfaces but is not semantic surface classification.
+- Offline `:app:assembleDebug` succeeded (35 tasks: 6 executed, 29 up to date). Updated APK install returned `Success`. The phone relocked immediately afterward; the changed placement behavior has not yet been rechecked on-device. No JVM tests were run for this change.

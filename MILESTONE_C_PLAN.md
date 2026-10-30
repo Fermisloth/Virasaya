@@ -16,7 +16,7 @@ Keep the existing Kotlin/Compose single module and olive/orange visual language.
 - Use the official ARCore Android SDK with a small GLSurfaceView renderer embedded through Compose AndroidView. Adapt the minimum camera-background, projection and simple geometry rendering from Google's sample, preserving applicable license notices. A procedural arrow/marker avoids model downloads and asset loaders.
 - Prefer this narrow renderer over introducing SceneView plus its rendering dependency tree for one marker. ARCore 1.56.0 is pinned and builds with the existing minSdk 24, compile/target 35, AGP 8.6.1 and Kotlin 2.0.21 toolchain.
 - ARCore owns the camera while the AR screen is active; do not add a competing CameraX preview. Bind session and GL lifecycle to the screen/activity and release the camera when returning to 2D.
-- Prefer a hit on a tracked upward-facing horizontal plane. Enable ARCore Instant Placement in local-Y-up mode as a fallback when plane fitting has not converged; label approximate anchors provisional until ARCore reports full tracking. Instruct visitors to tap the floor and continue scanning. No arbitrary screen overlay may be presented as a tracked world marker.
+- Accept placement only from a tracked upward-facing plane whose X and Z extents are each at least 0.35 m, and require the tap to fall inside its polygon. Instant Placement is disabled because its pose can shift as ARCore resolves nearby geometry, allowing a hand or object to become the apparent surface. Small hand-sized planes are filtered; this size/orientation heuristic is not semantic floor recognition. If no eligible floor is tracked, instruct visitors to scan a well-lit, textured floor and wait.
 
 ## Ordered implementation slices
 
@@ -30,7 +30,7 @@ Acceptance: declining permission, declining installation or using an unsupported
 
 ### C2. Camera and one real tracked marker — TRACKED MOVEMENT AND BASIC RE-ENTRY DEMONSTRATED
 
-Create/resume the session only after prerequisites pass. Render the camera feed with correct display rotation and projection. Accept taps only when camera tracking is active; use a valid detected horizontal plane when available, otherwise use the clearly labeled provisional Instant Placement fallback. Place one clearly visible marker, replacing and detaching the previous anchor on re-placement.
+Create/resume the session only after prerequisites pass. Render the camera feed with correct display rotation and projection. Accept taps only when camera tracking is active and a sufficiently large tracked upward-facing floor plane is detected. Place one clearly visible marker, replacing and detaching the previous anchor on re-placement.
 
 Show tracking state in Compose without publishing every render frame as UI state. Hide directional content when camera or anchor tracking is paused/stopped. Offer a contextual recovery instruction and a permanent “Use 2D directions” control. On a fresh session, require placement again rather than restoring an invalid native anchor.
 
@@ -69,6 +69,10 @@ Acceptance: repeated AR entry/exit does not produce a black camera or crash, and
 Keep these responsibilities small; introduce no generic AR framework or additional Gradle module.
 
 ## Verification and completion gate
+
+### Placement policy correction - 29 October 2026
+
+The user reported that an obstructed arrow disappeared and that a provisional arrow could follow their hand. ARCore's official Instant Placement docs confirm that its estimated pose is expected to change as scene geometry resolves. The implementation now disables Instant Placement, accepts only tracked upward-facing planes with minimum 0.35 m X/Z extents, and displays a specific lost-anchor message that asks the user to remove the obstruction and reacquire the floor. `:app:assembleDebug` succeeded and the APK installed, but Android relocked before physical verification of this fix. Keep floor-only placement and tracking-loss recovery as open device acceptance checks.
 
 1. Focused JVM tests: availability/error transitions, tracking visibility decisions, route-step preservation and alignment invalidation. Reuse existing routing tests. Tests should verify behavior, not SDK internals.
 2. Run :app:testDebugUnitTest and :app:assembleDebug after each source slice. Install using the existing debug key without clearing user data.

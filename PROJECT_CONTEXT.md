@@ -8,6 +8,8 @@
 
 ## 1. Project identity
 
+> **AR placement update (29 October 2026):** The Instant Placement fallback has been disabled after the user reported that its provisional arrow could follow a hand and disappear under obstruction. Placement now requires a tracked upward-facing plane at least 0.35 m across both axes; the UI explains when a floor anchor loses tracking. The updated APK built and installed, but the phone relocked before this change could be physically verified. See `PROGRESS.md` and `artifacts/VERIFICATION.md`.
+
 - **Name:** Virasaya
 - **Description:** Smartphone-based augmented reality heritage recognition and navigation guide.
 - **Initial pilot location:** Red Fort (Lal Qila), Delhi, India.

@@ -1,6 +1,6 @@
 # Virasaya task handoff
 
-Updated: 27 October 2026. Read this after context loss, then check `PROGRESS.md` and the current repository state.
+Updated: 29 October 2026. Read this after context loss, then check `PROGRESS.md` and the current repository state.
 
 ## Current checkpoint — Milestone C in progress
 
@@ -101,8 +101,16 @@ Hidden emulator was started for this task with AVD Medium_Phone_API_37.0, no-win
 
 If ADB becomes unauthorized, the earlier solution used the existing user key with ANDROID_USER_HOME=C:\Users\Swee2\.android and ADB_VENDOR_KEYS=C:\Users\Swee2\.android\adbkey before restarting the ADB server. Do not alter keys or uninstall the app.
 
+## Latest physical check - 29 October
+
+The phone reconnected to ADB with CAMERA permission granted. Virasaya's Lahori Gate detail visibly showed UNESCO World Heritage Centre / ICOMOS, assessment WHC-07/31.COM/INF.8B1, p. 97 (`artifacts/source-citation-device.png`). A fresh AR entry showed the live camera and retained Lahori Gate → Diwan-i-Aam, step 1. Tapping the visible floor rendered the orange arrow; it remained labeled “Provisional marker placed” in the later observation screenshot (`artifacts/ar-marker-post-placement.png`, `artifacts/ar-tracking-recovery-check.png`). This run did not deliberately induce tracking loss or verify recovery. Accessibility dumping failed with exit 137 on the GL camera screen, so those checks used screenshots. No source code changed and no build/tests ran. Next physical check: cover the rear camera or point at a blank surface briefly, then uncover and slowly scan a textured floor; record paused/recovered status. The earlier user-reported tracked-movement result remains in `artifacts/tracking-after-movement-report.png`.
+
 ## Documentation and worktree notes
+
+### AR placement fix after user report - 29 October
+
+The user reported the arrow disappearing when they obstructed the camera and a provisional arrow tracing their hand instead of the floor. ARCore Instant Placement intentionally changes its pose as scene geometry is resolved. The app now disables Instant Placement, accepts only tracked upward-facing planes whose X and Z extents are each at least 0.35 m, and reports when a placed floor anchor loses tracking. The build succeeded and APK installed, but the phone relocked before the new behavior could be physically verified. Next: unlock, return to the same route, confirm no marker appears until a broad floor plane is tracked, place it on the floor, then obstruct/uncover and verify the explanatory status and recovery behavior. Small-plane filtering is a heuristic, not semantic floor recognition.
 
 README.md, PROJECT_CONTEXT.md, PROGRESS.md, MILESTONE_C_PLAN.md and artifacts/VERIFICATION.md describe the current frontend/map and Milestone C state. There are many uncommitted source/assets and unrelated untracked IDE/tool files; inspect before staging or deleting. Preserve the reference PNG and source attribution.
 
-Skills already read/applied: frontend-design, playwright-skill, writing-for-agents, and diagnosing-bugs. Continue with AR tracking-loss recovery and repeatability checks; then proceed to verified Red Fort landmark content and a small site-specific navigation graph, the next engineering task.
+Skills already read/applied: frontend-design, playwright-skill, writing-for-agents, and diagnosing-bugs. Continue with AR tracking-loss recovery and repeatability checks. Red Fort historical content and the small site-specific navigation graph have already been audited; physical route accessibility validation remains open.

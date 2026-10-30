@@ -8,11 +8,10 @@ import android.os.Handler
 import android.os.Looper
 import com.google.ar.core.Coordinates2d
 import com.google.ar.core.Frame
-import com.google.ar.core.InstantPlacementPoint
-import com.google.ar.core.Plane
 import com.google.ar.core.Session
 import com.google.ar.core.TrackingState
 import com.google.ar.core.TrackingFailureReason
+import com.google.ar.core.Plane
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
@@ -32,7 +31,6 @@ class ArRenderer(
     @Volatile private var placementMissed = false
     @Volatile private var failed: String? = null
     private var anchor: com.google.ar.core.Anchor? = null
-    private var instantPlacementPoint: InstantPlacementPoint? = null
     private var cameraProgram = 0
     private var arrowProgram = 0
     private var cameraPositionAttribute = -1
@@ -130,20 +128,30 @@ class ArRenderer(
                 if (now - lastPlaneCheckAt >= 250L) {
                     lastPlaneCheckAt = now
                     val planes = session.getAllTrackables(Plane::class.java)
-                    val horizontalTracked = planes.count {
-                        it.type == Plane.Type.HORIZONTAL_UPWARD_FACING && it.trackingState == TrackingState.TRACKING
+                    val usableFloorTracked = planes.count {
+                        isUsableArrowFloor(
+                            horizontalUpwardFacing = it.type == Plane.Type.HORIZONTAL_UPWARD_FACING,
+                            tracking = it.trackingState == TrackingState.TRACKING,
+                            extentX = it.extentX,
+                            extentZ = it.extentZ,
+                        )
                     }
-                    planeDetected = horizontalTracked > 0
+                    planeDetected = usableFloorTracked > 0
                 }
                 anchor?.let { current ->
                     if (current.trackingState == TrackingState.TRACKING) drawArrow(current)
                 }
             }
             val anchorOk = anchor?.trackingState == TrackingState.TRACKING
-            val anchorProvisional = instantPlacementPoint?.trackingMethod ==
-                InstantPlacementPoint.TrackingMethod.SCREENSPACE_WITH_APPROXIMATE_DISTANCE
             if (!cameraOk) planeDetected = false
-            publish(ArTrackingStatus(cameraOk, anchorOk, planeDetected, anchorProvisional = anchorProvisional, placementMissed = placementMissed, trackingIssue = trackingIssue))
+            publish(ArTrackingStatus(
+                cameraTracking = cameraOk,
+                anchorTracking = anchorOk,
+                anchorPlaced = anchor != null,
+                planeDetected = planeDetected,
+                placementMissed = placementMissed,
+                trackingIssue = trackingIssue,
+            ))
         } catch (error: Exception) {
             failed = error.message ?: "The AR camera session stopped unexpectedly."
             publish(ArTrackingStatus(error = failed))
@@ -159,7 +167,6 @@ class ArRenderer(
         // the owning Session is already closed. Detaching is best-effort then.
         try { anchor?.detach() } catch (_: Exception) { }
         anchor = null
-        instantPlacementPoint = null
         angle.set(0f)
     }
     fun release() { clearAnchor() }
@@ -172,22 +179,18 @@ class ArRenderer(
         val planeHit = hits.firstOrNull { result ->
             val trackable = result.trackable
             trackable is Plane && trackable.trackingState == TrackingState.TRACKING &&
-                trackable.type == Plane.Type.HORIZONTAL_UPWARD_FACING && trackable.isPoseInPolygon(result.hitPose)
+                trackable.type == Plane.Type.HORIZONTAL_UPWARD_FACING &&
+                trackable.extentX >= MIN_ARROW_PLANE_EXTENT_METERS &&
+                trackable.extentZ >= MIN_ARROW_PLANE_EXTENT_METERS &&
+                trackable.isPoseInPolygon(result.hitPose)
         }
-        // When plane fitting has not converged yet, ARCore can place a provisional
-        // +Y-up point from the tap and refine its depth as the user scans the floor.
-        val hit = planeHit ?: runCatching {
-            frame.hitTestInstantPlacement(point.first, point.second, INSTANT_PLACEMENT_DISTANCE)
-                .firstOrNull { it.trackable is InstantPlacementPoint }
-        }.getOrNull()
-        if (hit == null) {
+        if (planeHit == null) {
             placementMissed = true
             return
         }
         placementMissed = false
         anchor?.detach()
-        anchor = hit.createAnchor()
-        instantPlacementPoint = hit.trackable as? InstantPlacementPoint
+        anchor = planeHit.createAnchor()
     }
 
     private fun drawCamera(frame: Frame) {
@@ -252,7 +255,6 @@ class ArRenderer(
     }
 
     private companion object {
-        const val INSTANT_PLACEMENT_DISTANCE = 1.5f
         const val CAMERA_VERTEX = "attribute vec4 a_Position; attribute vec2 a_TexCoord; varying vec2 v_TexCoord; void main(){gl_Position=a_Position;v_TexCoord=a_TexCoord;}"
         const val CAMERA_FRAGMENT = "#extension GL_OES_EGL_image_external : require\nprecision mediump float; uniform samplerExternalOES u_Texture; varying vec2 v_TexCoord; void main(){gl_FragColor=texture2D(u_Texture,v_TexCoord);}"
         const val ARROW_VERTEX = "attribute vec4 a_Position; uniform mat4 u_Mvp; void main(){gl_Position=u_Mvp*a_Position;}"
